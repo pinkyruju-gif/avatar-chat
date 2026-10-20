@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avatar Spirit Guide Chat</title>
+  <!-- Google Fonts for Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;600;700&family=Tulpen+One&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #050b14;
+      --card-bg: rgba(12, 23, 42, 0.75);
+      --glow-cyan: #00f3ff;
+      --glow-purple: #9d4edd;
+      --text-main: #e2f1f8;
+      --text-muted: #8ba3be;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.12), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(157, 78, 221, 0.1), transparent 50%);
+      color: var(--text-main);
+      font-family: 'Darker Grotesque', sans-serif;
+      font-size: 19px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Outer bioluminescent container */
+    .chat-wrapper {
+      width: 100%;
+      max-width: 480px;
+      height: 80vh;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.15), inset 0 0 15px rgba(157, 78, 221, 0.15);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .chat-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .guide-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid var(--glow-cyan);
+      box-shadow: 0 0 10px var(--glow-cyan);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .guide-title {
+      font-family: 'Cinzel', 'Tulpen One', serif;
+      letter-spacing: 2px;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 0 8px var(--glow-cyan);
+    }
+
+    .guide-status {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Messages container */
+    .messages-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 12px 18px;
+      border-radius: 18px;
+      line-height: 1.35;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .bubble.guide {
+      align-self: flex-start;
+      background: rgba(14, 34, 61, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #e6f7ff;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.1);
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, rgba(157, 78, 221, 0.8), rgba(90, 24, 154, 0.8));
+      border: 1px solid rgba(157, 78, 221, 0.6);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 0 12px rgba(157, 78, 221, 0.2);
+    }
+
+    /* Input area */
+    .input-row {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(0, 243, 255, 0.15);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(6, 16, 31, 0.8);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 30px;
+      padding: 12px 20px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input:focus {
+      border-color: var(--glow-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    }
+
+    .send-btn {
+      background: var(--glow-cyan);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--glow-cyan);
+      transition: transform 0.15s ease;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-wrapper">
+    <div class="chat-header">
+      <div class="guide-avatar" id="avatarImg" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop');"></div>
+      <div>
+        <div class="guide-title" id="guideName">Neytiri</div>
+        <div class="guide-status">Spirit Guide · Connected</div>
+      </div>
+    </div>
+
+    <div class="messages-area" id="messagesArea">
+      <div class="bubble guide" id="welcomeMsg">I see you. What is troubling your spirit today?</div>
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="userInput" class="chat-input" placeholder="Speak to your guide..." autocomplete="off">
+      <button id="sendBtn" class="send-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#050b14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+<script>
+    const GROQ_API_KEY = "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".trim();
+
+    const characterPrompts = {
+      neytiri: "You are Neytiri from Avatar acting as a personal spirit guide. Tone: Fierce, intuitive, protective, concise. Rule: Ground advice in nature, instincts, and standing firm. Keep replies under 3 complete sentences.",
+      jake: "You are Jake Sully from Avatar acting as a personal spirit guide. Tone: Resolute, direct, tactical, empathetic. Rule: Ground advice in courage, protection, and leadership. Keep replies under 3 complete sentences.",
+      kiri: "You are Kiri from Avatar acting as a personal spirit guide. Tone: Contemplative, gentle, curious, tuned into the pulse of the living world. Rule: Ground advice in quiet observation and breathing. Keep replies under 3 complete sentences."
+    };
+
+    const activeGuide = localStorage.getItem("userSpiritGuide") || "neytiri";
+    const guideNameElem = document.getElementById("guideName");
+    if (guideNameElem) guideNameElem.textContent = activeGuide.toUpperCase();
+
+    const messagesArea = document.getElementById("messagesArea");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function appendBubble(role, text) {
+      const bubble = document.createElement("div");
+      bubble.className = `bubble ${role}`;
+      bubble.textContent = text;
+      messagesArea.appendChild(bubble);
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+      return bubble;
+    }
+
+    async function handleSend() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      appendBubble("user", text);
+      userInput.value = "";
+
+      const loadingBubble = appendBubble("guide", "Checking available models...");
+
+      try {
+        // Fetch all models your key can see
+        const modelRes = await fetch("https://api.groq.com/openai/v1/models", {
+          headers: { "Authorization": `Bearer ${GROQ_API_KEY}` }
+        });
+        const modelData = await modelRes.json();
+
+        if (modelData.error) {
+          loadingBubble.textContent = "Auth Error: " + modelData.error.message;
+          return;
+        }
+
+        const allIds = modelData.data.map(m => m.id);
+        
+        // Exclude audio, guard, and terms-gated canopylabs models
+        const usable = allIds.filter(id => 
+          !id.includes("whisper") && 
+          !id.includes("guard") && 
+          !id.includes("canopylabs")
+        );
+
+        if (usable.length === 0) {
+          loadingBubble.textContent = "Models found on account: " + allIds.join(", ");
+          return;
+        }
+
+        const selectedModel = usable[0];
+        loadingBubble.textContent = "Listening to the Great Mother";
+
+        // Make chat completion request with the discovered model
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: [
+              {
+                role: "system",
+                content: characterPrompts[activeGuide] || characterPrompts.neytiri
+              },
+              {
+                role: "user",
+                content: text
+              }
+            ],
+            max_tokens: 300,
+            temperature: 0.7
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          loadingBubble.textContent = `Error with ${selectedModel}: ` + data.error.message;
+          return;
+        }
+
+        const reply = data.choices?.[0]?.message?.content;
+        loadingBubble.textContent = reply ? reply.trim() : "Eywa received no response.";
+
+      } catch (err) {
+        loadingBubble.textContent = "Error: " + err.message;
+      }
+    }
+
+    sendBtn.addEventListener("click", handleSend);
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSend();
+    });
+  </script>
+</body>
+</html>
